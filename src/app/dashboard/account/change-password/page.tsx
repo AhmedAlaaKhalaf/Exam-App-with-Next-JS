@@ -2,7 +2,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
-  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
@@ -22,7 +21,7 @@ export default function ChangePassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
-  const { data: session, update } = useSession();
+  const { data: session } = useSession();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
