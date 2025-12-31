@@ -5,6 +5,6 @@ declare type ErrorResponse = {
 
 declare type SuccessResponse<T> = {
   message: string;
-} & T;
+} & T; // extend type for any another data in response
 
 declare type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;

@@ -1,3 +1,5 @@
+// put all files inside lib/types
+
 import "next-auth";
 import "next-auth/jwt";
 

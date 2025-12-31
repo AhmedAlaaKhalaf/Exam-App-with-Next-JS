@@ -8,6 +8,7 @@ import Link from "next/link";
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useState } from "react";
 import { signIn } from 'next-auth/react';
+import { toast } from "@/hooks/use-toast";
 
 interface LoginFormFields {
   email: string,
@@ -36,8 +37,14 @@ export default function LoginForm() {
         redirect: false,
       });
       if (response?.ok) {
-        const callbackUrl = new URLSearchParams(window.location.search).get('callbackUrl') || '/dashboard/diplomas';
+        toast({
+          description: "Successfully logged in",
+          variant: "success",
+        });
+        setTimeout(() => {
+          const callbackUrl = new URLSearchParams(window.location.search).get('callbackUrl') || '/dashboard/diplomas';
         location.href = callbackUrl; // to make full Url reload of the page
+        }, 1000);
         return;
       }
       setError(response?.error || 'Login Failed');
