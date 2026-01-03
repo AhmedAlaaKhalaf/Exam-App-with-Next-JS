@@ -12,7 +12,7 @@ import { SlashIcon } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 
 export default function DashboardBreadcrumb() {
-  const pathname = usePathname();
+const pathname = usePathname();
   const segments = pathname.split("/").filter((segment, index) => index !== 1 && segment !== "");
   const [examTitles, setExamTitles] = useState<Record<string, string>>({});
   const fetchedRef = useRef<Set<string>>(new Set());
@@ -54,9 +54,9 @@ export default function DashboardBreadcrumb() {
           return (
             <div key={path} className="flex items-center">
               <BreadcrumbSeparator className="px-1">
-                <SlashIcon />
-              </BreadcrumbSeparator>
-              <BreadcrumbItem>
+          <SlashIcon />
+        </BreadcrumbSeparator>
+        <BreadcrumbItem>
                 {isLast ? (
                   <BreadcrumbPage className="capitalize font-geistMono text-primary">
                     {displayText}
@@ -66,7 +66,7 @@ export default function DashboardBreadcrumb() {
                     {displayText}
                   </BreadcrumbLink>
                 )}
-              </BreadcrumbItem>
+        </BreadcrumbItem>
             </div>
           );
         })}

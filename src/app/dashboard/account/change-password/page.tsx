@@ -25,12 +25,12 @@ export default function ChangePassword() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
+    
     if (!currentPassword || !newPassword || !confirmPassword) {
       setError("Please fill in all fields");
       return;
     }
-
+    
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -44,16 +44,16 @@ export default function ChangePassword() {
     const res = await fetch(
       `https://exam.elevateegy.com/api/v1/auth/changePassword`,
       {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          token: session.accessToken,
-        },
-        body: JSON.stringify({
-          oldPassword: currentPassword,
-          password: newPassword,
-          rePassword: confirmPassword,
-        }),
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        token: session.accessToken,
+      },
+      body: JSON.stringify({
+        oldPassword: currentPassword,
+        password: newPassword,
+        rePassword: confirmPassword,
+      }),
       }
     );
     const data = await res.json();
@@ -76,8 +76,8 @@ export default function ChangePassword() {
         });
 
         if (result?.ok) {
-          setTimeout(() => {
-            window.location.href = "/dashboard/account/profile";
+      setTimeout(() => {
+        window.location.href = "/dashboard/account/profile";
           }, 500);
         } else {
           toast({
@@ -93,7 +93,7 @@ export default function ChangePassword() {
       } else {
         setTimeout(() => {
           window.location.href = "/login";
-        }, 1000);
+      }, 1000);
       }
     } else {
       toast({
@@ -105,115 +105,115 @@ export default function ChangePassword() {
       setError(data.message || "Failed to change password. Please try again.");
     }
   };
-
+  
   return (
     <div>
       <Card className="w-full border-none">
-        <CardContent>
+      <CardContent>
           <form
             id="create-password-form"
             className="mt-10"
             onSubmit={handleSubmit}
           >
-            <FieldGroup>
-              <Field>
+          <FieldGroup>
+             <Field>
                 <FieldLabel
                   htmlFor="create-new-password"
                   className="font-geistMono"
                 >
-                  Current Password
-                </FieldLabel>
-                <div className="relative">
-                  <Input
-                    id="current-password"
-                    placeholder="********"
-                    className="input-default pr-10"
-                    type={showCurrentPassword ? "text" : "password"}
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
+                    Current Password
+                  </FieldLabel>
+                  <div className="relative">
+                    <Input
+                      id="current-password"
+                      placeholder="********"
+                      className="input-default pr-10"
+                      type={showCurrentPassword ? "text" : "password"}
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
                     {showCurrentPassword ? (
                       <EyeOff className="w-4 h-4" />
                     ) : (
                       <Eye className="w-4 h-4" />
                     )}
-                  </button>
-                </div>
-              </Field>
-              <Field>
+                    </button>
+                  </div>
+            </Field>
+             <Field>
                 <FieldLabel
                   htmlFor="create-new-password"
                   className="font-geistMono"
                 >
-                  New Password
-                </FieldLabel>
-                <div className="relative">
-                  <Input
-                    id="create-new-password"
-                    placeholder="********"
-                    className="input-default pr-10"
-                    type={showPassword ? "text" : "password"}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
+                    New Password
+                  </FieldLabel>
+                  <div className="relative">
+                    <Input
+                      id="create-new-password"
+                      placeholder="********"
+                      className="input-default pr-10"
+                      type={showPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
                     {showPassword ? (
                       <EyeOff className="w-4 h-4" />
                     ) : (
                       <Eye className="w-4 h-4" />
                     )}
-                  </button>
-                </div>
-              </Field>
-              <Field>
+                    </button>
+                  </div>
+            </Field>
+             <Field>
                 <FieldLabel
                   htmlFor="confirm-new-password"
                   className="font-geistMono"
                 >
-                  Confirm New Password
-                </FieldLabel>
-                <div className="relative">
-                  <Input
-                    id="confirm-new-password"
-                    placeholder="********"
-                    className="input-default pr-10"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
+                    Confirm New Password
+                  </FieldLabel>
+                  <div className="relative">
+                    <Input
+                      id="confirm-new-password"
+                      placeholder="********"
+                      className="input-default pr-10"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
                     {showConfirmPassword ? (
                       <EyeOff className="w-4 h-4" />
                     ) : (
                       <Eye className="w-4 h-4" />
                     )}
-                  </button>
-                </div>
-              </Field>
-            </FieldGroup>
-            {error && <ErrorMessage message={error} />}
+                    </button>
+                  </div>
+            </Field>
+          </FieldGroup>
+          {error && <ErrorMessage message={error} />}
             <button
               type="submit"
               className="bg-primary font-geistMono text-sm text-white w-full h-11 mt-10 flex items-center justify-center gap-2"
             >
               Update Password
             </button>
-          </form>
-        </CardContent>
-      </Card>
+        </form>
+      </CardContent>
+    </Card>
     </div>
   );
 }

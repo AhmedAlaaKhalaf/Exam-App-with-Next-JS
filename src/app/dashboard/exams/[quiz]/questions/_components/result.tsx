@@ -60,7 +60,7 @@ export default function Result({ questions, selectedAnswers, onRestart }: Result
       {/* Progress indicator - full at 100% */}
       <Progress value={100} />
       
-      <div className="flex gap-6">
+      <div className="flex gap-6 flex-wrap">
         <div className="flex flex-col gap-6 w-80">
           <h3 className="text-xl font-geistMono font-semibold text-primary">
             Results:
@@ -150,19 +150,19 @@ export default function Result({ questions, selectedAnswers, onRestart }: Result
         </div>
       </div>
                 {/* Buttons  */}
-        <div className="flex gap-3 mt-4">
+        <div className="flex flex-col sm:flex-row gap-3 mt-4">
             <button
               onClick={onRestart}
-              className="flex items-center justify-center gap-2 w-full py-3 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors font-geistMono font-medium"
+              className="flex items-center justify-center gap-2 w-full py-3 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors font-geistMono font-medium text-sm sm:text-base"
             >
-              <RotateCcw className="w-5 h-5" />
+              <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5" />
               Restart
             </button>
             <Link
               href="/dashboard/exams"
-              className="flex items-center justify-center gap-2 w-full py-3 bg-primary text-white hover:bg-primary/90 transition-colors font-geistMono font-medium"
+              className="flex items-center justify-center gap-2 w-full py-3 bg-primary text-white hover:bg-primary/90 transition-colors font-geistMono font-medium text-sm sm:text-base"
             >
-              <FolderOpen className="w-5 h-5" />
+              <FolderOpen className="w-4 h-4 sm:w-5 sm:h-5" />
               Explore
             </Link>
           </div>

@@ -55,20 +55,20 @@ export default async function Quiz({ params, searchParams }: Props) {
 
     return (
       <div className="p-0 bg-gray-50 flex-grow">
-        <div className="p-6 flex flex-col gap-6 h-full">
-          <div className="flex justify-center items-stretch gap-4">
+        <div className="p-4 md:p-6 flex flex-col gap-4 md:gap-6 h-full">
+          <div className="flex justify-center items-stretch gap-2 md:gap-4">
             <Link
               href="/dashboard/exams"
-              className="cursor-pointer bg-white border border-primary flex justify-center items-center px-2 py-4 hover:bg-gray-50 transition-colors"
+              className="cursor-pointer bg-white border border-primary flex justify-center items-center px-2 py-3 md:py-4 hover:bg-gray-50 transition-colors shrink-0"
             >
-              <ChevronLeft className="text-primary w-6 h-6" />
+              <ChevronLeft className="text-primary w-5 h-5 md:w-6 md:h-6" />
             </Link>
-            <header className="flex items-center gap-4 bg-primary p-4 w-full">
+            <header className="flex items-center gap-2 md:gap-4 bg-primary p-3 md:p-4 w-full">
               <div className="icon">
-                <CircleQuestionMark className="text-white w-10 h-10" />
+                <CircleQuestionMark className="text-white w-8 h-8 md:w-10 md:h-10" />
               </div>
               <div className="font-inter">
-                <p className="font-semibold text-white text-[2rem] capitalize">
+                <p className="font-semibold text-white text-lg md:text-xl lg:text-[2rem] capitalize truncate">
                   [{examTitle}] Questions
                 </p>
               </div>

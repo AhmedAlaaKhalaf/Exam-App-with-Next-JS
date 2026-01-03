@@ -16,7 +16,7 @@ export default function AccountSidebar() {
         }, 1000);
     };
     return (
-        <div className="profileMenuWrap flex flex-col gap-14 grow min-h-[70vh] justify-between">
+        <div className="profileMenuWrap flex flex-col justify-between h-full gap-8">
         <ul className="flex flex-col gap-3 adminMenu" id="profileMenu">
           <MenuItem href="/dashboard/account/profile" defaultActive>
               <div className="icon w-6 h-6"><CircleUserRound className="text-primary"/></div>
@@ -31,7 +31,7 @@ export default function AccountSidebar() {
               </div>
           </MenuItem>
         </ul>
-        <button type="button" onClick={handleLogout} className="bg-red-50 font-geistMono text-sm text-red-600 w-full h-11 mt-10" disabled={loggingOut}>
+        <button type="button" onClick={handleLogout} className="bg-red-50 font-geistMono text-sm text-red-600 w-full h-11 shrink-0" disabled={loggingOut}>
               {loggingOut ? (
                 <span className="flex items-center justify-center">
                   <svg className="animate-spin h-4 w-4 mr-2 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

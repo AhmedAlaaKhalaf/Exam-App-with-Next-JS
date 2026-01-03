@@ -1,16 +1,17 @@
-import { GraduationCap, UserRound } from "lucide-react"
-import { getServerSession } from 'next-auth/next';
-import { authOption } from '@/auth';
+"use client";
+import { GraduationCap, UserRound } from "lucide-react";
+import { useSession } from "next-auth/react";
 import MenuItem from "./menu-item";
 
-export default async function Sidebar() {
-  const session = await getServerSession(authOption);
+export default function SidebarClient() {
+  const { data: session } = useSession();
   
   const firstName = session?.user?.firstName || 'User';
   const email = session?.user?.email || 'user@example.com';
+  
   return (
     <div className="h-full">
-      <div className="p-4 md:p-10 flex flex-col h-full">
+      <div className="p-6 pt-16 md:p-10 flex flex-col h-full">
         <div className="logo mb-3">
           <img src="/assets/images/logo.png" width={190} alt="logo" className="w-full max-w-[190px]" /> 
         </div>
@@ -18,7 +19,7 @@ export default async function Sidebar() {
           <img src="/assets/icons/folder-code.svg" alt="exam-icon" className="w-5 h-5 md:w-6 md:h-6" /> 
           <p className="font-geistMono text-primary text-lg md:text-[1.25rem] font-semibold">Exam App</p>
         </div>
-        <div className="adminMenuWrap flex flex-col gap-14 mt-8 md:mt-16 grow min-h-[70vh] justify-between">
+        <div className="adminMenuWrap flex flex-col gap-8 md:gap-14 mt-6 md:mt-8 lg:mt-16 grow min-h-0 justify-between">
           <ul className="flex flex-col gap-3 adminMenu" id="adminMenu">
            <MenuItem href="/dashboard/diplomas" defaultActive>
                 <div className="icon w-6 h-6"><GraduationCap className="text-primary"/></div>
@@ -45,3 +46,4 @@ export default async function Sidebar() {
     </div>
   );
 }
+

@@ -9,7 +9,7 @@ export default function ForgetPassword() {
   const [email, setEmail] = useState<string>("");
   const [otpToken, setOtpToken] = useState("");
   return (
-    <div className="px-32 flex flex-col">
+    <div className="w-full max-w-md px-6 flex flex-col">
       {step === "email" && (
         <EmailStep
           email={email}

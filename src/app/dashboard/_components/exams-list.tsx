@@ -32,18 +32,18 @@ export default async function ExamsList() {
     return <div>Not authenticated</div>;
   }
 
-  const response = await fetch(`https://exam.elevateegy.com/api/v1/exams`, {
-    headers: {
-      token: accessToken,
-    },
-  });
+    const response = await fetch(`https://exam.elevateegy.com/api/v1/exams`, {
+      headers: {
+        token: accessToken,
+      },
+    });
 
-  if (!response.ok) {
+    if (!response.ok) {
     throw new Error("Failed to fetch exams");
-  }
+    }
 
-  const data: ExamsResponse = await response.json();
-  const exams = data.exams;
+    const data: ExamsResponse = await response.json();
+    const exams = data.exams;
   
 
   // If no exams found for this subject
@@ -53,34 +53,34 @@ export default async function ExamsList() {
         <p className="text-gray-600 font-normal font-geistMono text-center">
           No exams found for this subject.
         </p>
-      </div>
+            </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 bg-white p-6 h-full">
+    <div className="flex flex-col gap-4 bg-white p-4 md:p-6 h-full">
       {exams?.map((exam: Exam) => (
         <Link
           key={exam._id}
           href={`/dashboard/exams/${exam._id}?subject=${exam.subject}`}
-          className="flex justify-between items-center bg-blue-50 p-4 hover:bg-blue-100 transition-colors cursor-pointer"
+          className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 bg-blue-50 p-4 hover:bg-blue-100 transition-colors cursor-pointer rounded-md"
         >
-          <div className="flex flex-col gap-1">
-            <p className="text-blue-600 font-semibold text-xl font-geistMono">
+          <div className="flex flex-col gap-1 flex-1 min-w-0">
+            <p className="text-blue-600 font-semibold text-lg sm:text-xl font-geistMono truncate">
               {exam.title}
             </p>
-            <p className="text-gray-500 font-normal text-sm font-geistMono">
+            <p className="text-gray-500 font-normal text-xs sm:text-sm font-geistMono">
               {exam.numberOfQuestions} Questions
             </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Timer className="text-gray-400 w-6 h-6" />
-            <p className="text-gray-800 font-medium font-geistMono text-sm">
+            </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Timer className="text-gray-400 w-5 h-5 sm:w-6 sm:h-6" />
+            <p className="text-gray-800 font-medium font-geistMono text-xs sm:text-sm whitespace-nowrap">
               Duration: {exam.duration} minutes
             </p>
-          </div>
+        </div>
         </Link>
-      ))}
+    ))}
       <p className="text-gray-600 font-normal font-geistMono text-center mt-3">
         End of list
       </p>

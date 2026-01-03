@@ -52,14 +52,14 @@ export const authOption : NextAuthOptions = {
           token.user = session.user;
         }
       }
-      return token;
+      return token; // token is saved to cookie
     },
     session: async ({session, token}) => {
       if (token) {
         session.user = token.user!;
         session.accessToken = token.accessToken;
       }
-      return session;
+      return session; // session is returned to useSession()
     }
 } 
 }

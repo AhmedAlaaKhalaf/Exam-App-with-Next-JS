@@ -102,18 +102,18 @@ export function ChartPieDonutText({
               endAngle={-270}
             >
               {showLabel && (
-                <Label
-                  content={({ viewBox }) => {
-                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                      return (
-                        <text
+              <Label
+                content={({ viewBox }) => {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                    return (
+                      <text
+                        x={viewBox.cx}
+                        y={viewBox.cy}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                      >
+                        <tspan
                           x={viewBox.cx}
-                          y={viewBox.cy}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                        >
-                          <tspan
-                            x={viewBox.cx}
                             y={(viewBox.cy || 0) - 8}
                             className={`text-2xl font-bold font-geistMono ${
                               isCritical 
@@ -122,21 +122,21 @@ export function ChartPieDonutText({
                                 ? 'fill-orange-500' 
                                 : 'fill-foreground'
                             }`}
-                          >
+                        >
                             {formattedTime}
-                          </tspan>
-                          <tspan
-                            x={viewBox.cx}
+                        </tspan>
+                        <tspan
+                          x={viewBox.cx}
                             y={(viewBox.cy || 0) + 16}
                             className="fill-muted-foreground text-xs"
-                          >
+                        >
                             Remaining
-                          </tspan>
-                        </text>
-                      )
-                    }
-                  }}
-                />
+                        </tspan>
+                      </text>
+                    )
+                  }
+                }}
+              />
               )}
             </Pie>
           </PieChart>

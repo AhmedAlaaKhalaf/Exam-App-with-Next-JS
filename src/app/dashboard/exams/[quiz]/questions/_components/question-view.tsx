@@ -92,36 +92,40 @@ export default function QuestionView({
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex justify-between items-center pt-4 gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center pt-4 gap-3 sm:gap-4">
         <button
           onClick={onPrevious}
           disabled={isFirstStep}
-          className={`flex items-center justify-center gap-2 flex-1 py-4 font-geistMono font-medium transition-colors ${
+          className={`flex items-center justify-center gap-2 flex-1 py-3 sm:py-4 font-geistMono font-medium transition-colors text-sm sm:text-base ${
             isFirstStep
               ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          <ChevronLeft className="w-5 h-5" />
-          Previous
+          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span className="hidden sm:inline">Previous</span>
+          <span className="sm:hidden">Prev</span>
         </button>
-        <ExamCountdown 
-          durationMinutes={examDuration}
-          onTimeUp={onTimeUp}
-        />
+        <div className="order-first sm:order-none">
+          <ExamCountdown 
+            durationMinutes={examDuration}
+            onTimeUp={onTimeUp}
+          />
+        </div>
         <button
           onClick={isLastStep ? onSubmit : onNext}
-          className={`flex items-center justify-center gap-2 flex-1 py-4 font-geistMono font-medium bg-primary text-white hover:bg-primary/90 transition-colors`}
+          className={`flex items-center justify-center gap-2 flex-1 py-3 sm:py-4 font-geistMono font-medium bg-primary text-white hover:bg-primary/90 transition-colors text-sm sm:text-base`}
         >
           {isLastStep ? (
             <>
-              Finish
-              <ChevronRight className="w-5 h-5" />
+              <span className="hidden sm:inline">Finish</span>
+              <span className="sm:hidden">Done</span>
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </>
           ) : (
             <>
               Next
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </>
           )}
         </button>
