@@ -1,4 +1,5 @@
 import { BookOpenCheck, Brain, RectangleEllipsis } from "lucide-react"
+import Image from "next/image"
 
 
 
@@ -8,7 +9,7 @@ export default function Sidebar() {
       <div className="absolute inset-0 bg-[#EFF6FF]/75 backdrop-blur-2xl"></div>
       <div className="relative py-16 md:py-20 lg:py-28 px-6 md:px-16 lg:px-32">
         <div className="flex items-center gap-2 md:gap-3">
-          <img src="/assets/icons/folder-code.svg" alt="exam-icon" className="w-5 h-5 md:w-6 md:h-6" /> 
+          <Image src="/assets/icons/folder-code.svg" alt="exam-icon" width={24} height={24} className="w-5 h-5 md:w-6 md:h-6" unoptimized /> 
           <p className="font-geistMono text-primary text-lg md:text-[1.25rem] font-semibold">Exam App</p>
         </div>
         <div className="content flex flex-col gap-8 md:gap-14 mt-12 md:mt-20 lg:mt-32">

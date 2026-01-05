@@ -1,6 +1,7 @@
 "use client";
 import { GraduationCap, UserRound } from "lucide-react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import MenuItem from "./menu-item";
 
 export default function SidebarClient() {
@@ -13,10 +14,10 @@ export default function SidebarClient() {
     <div className="h-full">
       <div className="p-6 pt-16 md:p-10 flex flex-col h-full">
         <div className="logo mb-3">
-          <img src="/assets/images/logo.png" width={190} alt="logo" className="w-full max-w-[190px]" /> 
+          <Image src="/assets/images/logo.png" width={190} height={190} alt="logo" className="w-full max-w-[190px]" /> 
         </div>
         <div className="flex items-center gap-2 md:gap-3">
-          <img src="/assets/icons/folder-code.svg" alt="exam-icon" className="w-5 h-5 md:w-6 md:h-6" /> 
+          <Image src="/assets/icons/folder-code.svg" alt="exam-icon" width={24} height={24} className="w-5 h-5 md:w-6 md:h-6" unoptimized /> 
           <p className="font-geistMono text-primary text-lg md:text-[1.25rem] font-semibold">Exam App</p>
         </div>
         <div className="adminMenuWrap flex flex-col gap-8 md:gap-14 mt-6 md:mt-8 lg:mt-16 grow min-h-0 justify-between">
@@ -35,7 +36,7 @@ export default function SidebarClient() {
             </MenuItem>
           </ul>
           <div className="flex items-center gap-2 md:gap-3">
-          <img src="/assets/images/avatar.png" alt="avatar" className="w-10 h-10 md:w-12 md:h-12" /> 
+          <Image src="/assets/images/avatar.png" alt="avatar" width={48} height={48} className="w-10 h-10 md:w-12 md:h-12" /> 
           <div className="accountInfo">
             <p className="name font-geistMono text-primary text-sm md:text-[1rem] font-semibold truncate">{firstName}</p>
             <p className="email font-geistMono text-paragraph text-xs md:text-[0.75rem] font-normal truncate">{email}</p>
