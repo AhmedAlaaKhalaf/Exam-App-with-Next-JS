@@ -47,7 +47,7 @@ export default function DashboardWrapper({ children }: DashboardWrapperProps) {
         </aside>
 
         {/* Main Content */}
-        <main className="w-full lg:w-3/4 overflow-y-auto flex flex-col pt-16 lg:pt-0 min-h-0">
+        <main className="w-full lg:w-3/4 overflow-y-auto flex flex-col pt-16 lg:pt-0 min-h-0 grow">
           {children}
         </main>
       </div>
