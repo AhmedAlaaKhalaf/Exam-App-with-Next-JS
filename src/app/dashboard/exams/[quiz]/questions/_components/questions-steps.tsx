@@ -39,7 +39,6 @@ export default function QuestionsSteps({ questions, examDuration }: QuestionsSte
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
-
   const currentQuestion = questions[currentStep];
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === questions.length - 1;
