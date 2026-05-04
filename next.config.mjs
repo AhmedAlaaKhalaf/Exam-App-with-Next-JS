@@ -3,8 +3,14 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-     images: {
-    domains: ["exam.elevateegy.com"],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "exam-app.elevate-bootcamp.cloud",
+        pathname: "/**",
+      },
+    ],
   },
 };
 

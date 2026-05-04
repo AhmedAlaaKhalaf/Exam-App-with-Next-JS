@@ -4,42 +4,53 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useState } from 'react';
+import { getApiBase, authHeaders, isApiFailure, apiErrorMessage } from "@/lib/api";
 
-type Subject = {
-  _id: string;
-  name: string;
-  icon: string;
+type DiplomaRow = {
+  id: string;
+  title: string;
+  image: string | null;
   createdAt: string;
 };
 
-type Metadata = {
-  currentPage: number;
-  numberOfPages: number;
+type PaginationMetadata = {
+  page: number;
   limit: number;
+  total: number;
+  totalPages: number;
 };
 
-type ExamsResponse = {
-  message: string;
-  metadata: Metadata;
-  subjects: Subject[];
+type DiplomasEnvelope = {
+  status: boolean;
+  payload?: {
+    data: DiplomaRow[];
+    metadata: PaginationMetadata;
+  };
 };
 
 export default function InfiniteDiplomasList({ accessToken }: { accessToken: string }) {
   const [visibleCount, setVisibleCount] = useState(4);
 
   const fetchDiplomas = async ({ pageParam }: { pageParam: number }) => {
-    const response = await fetch(`https://exam.elevateegy.com/api/v1/subjects?page=${pageParam}&limit=4`, {
-      headers: {
-        token: accessToken,
-      },
-    });
+    const response = await fetch(
+      `${getApiBase()}/diplomas?page=${pageParam}&limit=4`,
+      {
+        headers: {
+          ...authHeaders(accessToken),
+        },
+      }
+    );
 
     if (!response.ok) {
-      throw new Error('Failed to fetch diplomas');
+      const body = await response.json().catch(() => ({}));
+      throw new Error(apiErrorMessage(body, 'Failed to fetch diplomas'));
     }
 
-    const data: ExamsResponse = await response.json();
-    return data;
+    const data = (await response.json()) as DiplomasEnvelope;
+    if (isApiFailure(data) || !data.payload) {
+      throw new Error(apiErrorMessage(data, 'Failed to fetch diplomas'));
+    }
+    return data.payload;
   };
 
   const {
@@ -53,21 +64,19 @@ export default function InfiniteDiplomasList({ accessToken }: { accessToken: str
     queryKey: ['diplomas', accessToken],
     queryFn: fetchDiplomas,
     getNextPageParam: (lastPage) => {
-      const { currentPage, numberOfPages } = lastPage.metadata;
-      return currentPage < numberOfPages ? currentPage + 1 : undefined;
+      const { page, totalPages } = lastPage.metadata;
+      return page < totalPages ? page + 1 : undefined;
     },
     initialPageParam: 1,
   });
 
-  // Combine all pages' subjects into a single array
-  const allDiplomas = data?.pages.map((page) => page.subjects).flat() || [];
+  const allDiplomas = data?.pages.map((page) => page.data).flat() || [];
   const visibleDiplomas = allDiplomas.slice(0, visibleCount);
   const hasMoreInFetched = visibleCount < allDiplomas.length;
   const hasMoreToShow = hasMoreInFetched || hasNextPage;
 
   const handleViewMore = async () => {
     if (hasMoreInFetched) {
-      // Show next 4 from already fetched data
       setVisibleCount((prev) => prev + 4);
     } else if (hasNextPage) {
       await fetchNextPage();
@@ -90,23 +99,29 @@ export default function InfiniteDiplomasList({ accessToken }: { accessToken: str
   return (
     <div className="flex flex-col gap-2">
       <div className="flex justify-between items-center flex-wrap">
-        {visibleDiplomas.map((exam) => (
-          <Link 
-            href={`/dashboard/exams`}
+        {visibleDiplomas.map((diploma) => (
+          <Link
+            href={`/dashboard/exams?diploma=${encodeURIComponent(diploma.id)}`}
             className="lg:w-1/2 md:w-1/2 w-full p-1 block cursor-pointer hover:opacity-90 transition-opacity"
-            key={exam._id}
+            key={diploma.id}
           >
             <div className="relative overflow-hidden">
               <div className="w-full h-[448px] relative">
-                <Image 
-                  src={exam.icon}
-                  alt={exam.name}
-                  fill
-                  className="object-cover"
-                />
+                {diploma.image ? (
+                  <Image
+                    src={diploma.image}
+                    alt={diploma.title}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 font-geistMono">
+                    No image
+                  </div>
+                )}
               </div>
               <div className="py-4 px-2 absolute bottom-2 left-2 right-2 bg-[#155DFC]/50">
-                <h2 className="text-white text-lg font-geistMono font-semibold line-clamp-2">{exam.name}</h2>
+                <h2 className="text-white text-lg font-geistMono font-semibold line-clamp-2">{diploma.title}</h2>
               </div>
             </div>
           </Link>

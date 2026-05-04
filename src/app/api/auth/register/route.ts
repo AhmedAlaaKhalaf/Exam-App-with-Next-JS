@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getApiBase, isApiFailure, apiErrorMessage } from '@/lib/api';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const response = await fetch(`${process.env.API}/auth/signup`, {
+    const response = await fetch(`${getApiBase()}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -14,9 +15,9 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json();
 
-    if (!response.ok) {
+    if (!response.ok || isApiFailure(data)) {
       return NextResponse.json(
-        { message: data.message || 'Registration failed' },
+        { message: apiErrorMessage(data, 'Registration failed') },
         { status: response.status }
       );
     }

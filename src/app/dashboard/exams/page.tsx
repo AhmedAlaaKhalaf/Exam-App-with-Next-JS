@@ -3,7 +3,13 @@ import ExamsList from "../_components/exams-list";
 import { Suspense } from "react";
 import Link from "next/link";
 
-export default function Exams() {
+export default function Exams({
+  searchParams,
+}: {
+  searchParams: { diploma?: string; subject?: string };
+}) {
+  const diplomaId = searchParams.diploma ?? searchParams.subject;
+
   return (
     <div className="p-0 bg-gray-50 flex-grow">
       <div className="p-4 md:p-6 flex flex-col gap-4 md:gap-6 h-full">
@@ -34,7 +40,7 @@ export default function Exams() {
               </div>
             }
           >
-            <ExamsList />
+            <ExamsList diplomaId={diplomaId} />
           </Suspense>
         </div>
       </div>

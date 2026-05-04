@@ -2,6 +2,7 @@ import { authOption } from "@/auth";
 import { Timer } from "lucide-react";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
+import { getApiBase, authHeaders, isApiFailure, apiErrorMessage } from "@/lib/api";
 
 type Exam = {
   _id: string;
@@ -11,20 +12,19 @@ type Exam = {
   numberOfQuestions: number;
   active: boolean;
 };
-type Metadata = {
-  currentPage: number;
-  numberOfPages: number;
+
+type PaginationMetadata = {
+  page: number;
   limit: number;
-};
-type ExamsResponse = {
-  message: string;
-  metadata: Metadata;
-  exams: Exam[];
+  total: number;
+  totalPages: number;
 };
 
-
-
-export default async function ExamsList() {
+export default async function ExamsList({
+  diplomaId,
+}: {
+  diplomaId?: string;
+}) {
   const session = await getServerSession(authOption);
   const accessToken = session?.accessToken;
 
@@ -32,28 +32,54 @@ export default async function ExamsList() {
     return <div>Not authenticated</div>;
   }
 
-    const response = await fetch(`https://exam.elevateegy.com/api/v1/exams`, {
-      headers: {
-        token: accessToken,
-      },
-    });
+  const qs = new URLSearchParams({ page: "1", limit: "100" });
+  if (diplomaId) {
+    qs.set("diplomaId", diplomaId);
+  }
 
-    if (!response.ok) {
-    throw new Error("Failed to fetch exams");
-    }
+  const response = await fetch(`${getApiBase()}/exams?${qs.toString()}`, {
+    headers: {
+      ...authHeaders(accessToken),
+    },
+    cache: "no-store",
+  });
 
-    const data: ExamsResponse = await response.json();
-    const exams = data.exams;
-  
+  if (!response.ok) {
+    const errBody = await response.json().catch(() => ({}));
+    throw new Error(apiErrorMessage(errBody, "Failed to fetch exams"));
+  }
 
-  // If no exams found for this subject
+  const raw = await response.json();
+  if (isApiFailure(raw)) {
+    throw new Error(apiErrorMessage(raw, "Failed to fetch exams"));
+  }
+
+  const payload = raw.payload as
+    | { data: Record<string, unknown>[]; metadata: PaginationMetadata }
+    | undefined;
+  const rows = payload?.data ?? (raw as { exams?: unknown[] }).exams ?? [];
+
+  const exams: Exam[] = rows.map((row) => {
+    const r = row as Record<string, unknown>;
+    const id = String(r.id ?? r._id ?? "");
+    const diplomaIdVal = String(r.diplomaId ?? r.subject ?? "");
+    return {
+      _id: id,
+      title: String(r.title ?? ""),
+      duration: Number(r.duration ?? 0),
+      subject: diplomaIdVal,
+      numberOfQuestions: Number(r.questionsCount ?? r.numberOfQuestions ?? 0),
+      active: Boolean(r.active ?? true),
+    };
+  });
+
   if (exams.length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
         <p className="text-gray-600 font-normal font-geistMono text-center">
           No exams found for this subject.
         </p>
-            </div>
+      </div>
     );
   }
 
@@ -72,15 +98,15 @@ export default async function ExamsList() {
             <p className="text-gray-500 font-normal text-xs sm:text-sm font-geistMono">
               {exam.numberOfQuestions} Questions
             </p>
-            </div>
+          </div>
           <div className="flex items-center gap-2 shrink-0">
             <Timer className="text-gray-400 w-5 h-5 sm:w-6 sm:h-6" />
             <p className="text-gray-800 font-medium font-geistMono text-xs sm:text-sm whitespace-nowrap">
               Duration: {exam.duration} minutes
             </p>
-        </div>
+          </div>
         </Link>
-    ))}
+      ))}
       <p className="text-gray-600 font-normal font-geistMono text-center mt-3">
         End of list
       </p>

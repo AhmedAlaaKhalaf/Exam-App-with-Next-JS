@@ -1,6 +1,7 @@
 import { authOption } from "@/auth";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import { getApiBase, authHeaders } from "@/lib/api";
 
 export async function GET(
   request: NextRequest,
@@ -15,10 +16,10 @@ export async function GET(
 
   try {
     const response = await fetch(
-      `https://exam.elevateegy.com/api/v1/exams/${params.id}`,
+      `${getApiBase()}/exams/${params.id}`,
       {
         headers: {
-          token: accessToken,
+          ...authHeaders(accessToken),
         },
       }
     );
@@ -31,7 +32,8 @@ export async function GET(
     }
 
     const data = await response.json();
-    const exam = data.exam || data;
+    const exam =
+      data.exam ?? data.payload?.exam ?? data.payload ?? data;
     
     return NextResponse.json({ title: exam?.title || params.id });
   } catch (error) {

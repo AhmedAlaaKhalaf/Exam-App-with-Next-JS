@@ -12,6 +12,7 @@ import { toast } from "@/hooks/use-toast";
 import { useSession } from "next-auth/react";
 import { signIn } from "next-auth/react";
 import ErrorMessage from "@/app/(auth)/_components/error-message";
+import { getApiBase, jsonAuthHeaders, isApiFailure, apiErrorMessage } from "@/lib/api";
 
 export default function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -42,23 +43,22 @@ export default function ChangePassword() {
     }
 
     const res = await fetch(
-      `https://exam.elevateegy.com/api/v1/auth/changePassword`,
+      `${getApiBase()}/users/change-password`,
       {
-      method: "PATCH",
+      method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        token: session.accessToken,
+        ...jsonAuthHeaders(session.accessToken),
       },
       body: JSON.stringify({
-        oldPassword: currentPassword,
-        password: newPassword,
-        rePassword: confirmPassword,
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+        confirmPassword: confirmPassword,
       }),
       }
     );
     const data = await res.json();
 
-    if (res.ok) {
+    if (res.ok && !isApiFailure(data)) {
       toast({
         description: "Password updated successfully",
         variant: "success",
@@ -67,10 +67,10 @@ export default function ChangePassword() {
       setNewPassword("");
       setConfirmPassword("");
 
-      const userEmail = session?.user?.email;
-      if (userEmail) {
+      const userLogin = session?.user?.username || session?.user?.email;
+      if (userLogin) {
         const result = await signIn("credentials", {
-          email: userEmail,
+          email: userLogin,
           password: newPassword,
           redirect: false,
         });
@@ -99,10 +99,10 @@ export default function ChangePassword() {
       toast({
         title: "Error",
         description:
-          data.message || "Failed to change password. Please try again.",
+          apiErrorMessage(data, "Failed to change password. Please try again."),
         variant: "destructive",
       });
-      setError(data.message || "Failed to change password. Please try again.");
+      setError(apiErrorMessage(data, "Failed to change password. Please try again."));
     }
   };
   

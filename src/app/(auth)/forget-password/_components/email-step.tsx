@@ -9,14 +9,15 @@ import { Input } from "@/components/ui/input";
 import { MoveRight } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { getApiBase, isApiFailure, apiErrorMessage } from "@/lib/api";
 
 type EmailStepProps = {
   email:string;
   setEmail: (email:string) => void;
-  onNext: () => void;
+  onSent: () => void;
 }
 
-export default function EmailStep({email, setEmail, onNext}: EmailStepProps) {
+export default function EmailStep({email, setEmail, onSent}: EmailStepProps) {
   const [error, setError] = useState("");
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,21 +28,26 @@ export default function EmailStep({email, setEmail, onNext}: EmailStepProps) {
       setError("Please enter your email address");
       return;
     }
+
+    const redirectUrl =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/forget-password`
+        : undefined;
     
-    const res = await fetch(`https://exam.elevateegy.com/api/v1/auth/forgotPassword`, {
+    const res = await fetch(`${getApiBase()}/auth/forgot-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, ...(redirectUrl ? { redirectUrl } : {}) }),
     });
     
     const data = await res.json();
     
-    if (res.ok) {
-      onNext();
+    if (res.ok && !isApiFailure(data)) {
+      onSent();
     } else {
-      setError(data.message || "Failed to send reset code. Please try again.");
+      setError(apiErrorMessage(data, "Failed to send reset link. Please try again."));
     }
   };
   return (
@@ -73,6 +79,9 @@ export default function EmailStep({email, setEmail, onNext}: EmailStepProps) {
                 />
               </Field>
             </FieldGroup>
+            {error ? (
+              <p className="text-red-600 text-sm mt-3 font-geistMono">{error}</p>
+            ) : null}
             <button
               type="submit"
               className="bg-primary font-geistMono text-sm text-white w-full h-11 mt-10 flex items-center justify-center gap-2"

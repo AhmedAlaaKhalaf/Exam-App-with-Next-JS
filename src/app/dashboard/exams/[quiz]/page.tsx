@@ -4,21 +4,13 @@ import { Suspense } from "react";
 import Questions from "./questions/page";
 import { authOption } from "@/auth";
 import { getServerSession } from "next-auth";
+import { getApiBase, authHeaders } from "@/lib/api";
 
 type Props = {
   params: {
     quiz: string;
   };
   searchParams: { subject?: string };
-};
-
-type Exam = {
-  _id: string;
-  title: string;
-  duration: number;
-  subject: string;
-  numberOfQuestions: number;
-  active: boolean;
 };
 
 export default async function Quiz({ params, searchParams }: Props) {
@@ -33,17 +25,18 @@ export default async function Quiz({ params, searchParams }: Props) {
   
   if (accessToken) {
     try {
-      const response = await fetch(`https://exam.elevateegy.com/api/v1/exams/${examId}`, {
+      const response = await fetch(`${getApiBase()}/exams/${examId}`, {
         headers: {
-          token: accessToken,
+          ...authHeaders(accessToken),
         },
       });
       
       if (response.ok) {
         const data = await response.json();
-        const exam: Exam = data.exam || data;
-        if (exam && exam.title) {
-          examTitle = exam.title;
+        const raw = data.exam ?? data.payload?.exam ?? data.payload ?? data;
+        const title = (raw as { title?: string })?.title;
+        if (title) {
+          examTitle = title;
         }
       }
     } catch (error) {

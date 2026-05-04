@@ -1,20 +1,26 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { EyeOff, Eye, MoveLeft, MoveRight} from "lucide-react";
+import { EyeOff, Eye, MoveLeft} from "lucide-react";
 import ErrorMessage from "../../_components/error-message";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
+import { getApiBase, isApiFailure, apiErrorMessage } from "@/lib/api";
 
 type NewPasswordStepProps = { 
-    email:string;
-    otpToken:string;
+    resetToken: string;
+    onBack: () => void;
 }
 
-export default function NewPasswordStep({email, otpToken}:NewPasswordStepProps) {
+export default function NewPasswordStep({ resetToken, onBack }: NewPasswordStepProps) {
+  const [tokenInput, setTokenInput] = useState(resetToken);
   const [newPassword, setNewPassword] = useState("");
+
+  useEffect(() => {
+    if (resetToken) setTokenInput(resetToken);
+  }, [resetToken]);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -24,6 +30,11 @@ export default function NewPasswordStep({email, otpToken}:NewPasswordStepProps) 
     e.preventDefault();
     setError("");
     
+    if (!tokenInput?.trim()) {
+      setError("Reset token is required (from your email link)");
+      return;
+    }
+
     if (!newPassword || !confirmPassword) {
       setError("Please fill in all fields");
       return;
@@ -34,17 +45,21 @@ export default function NewPasswordStep({email, otpToken}:NewPasswordStepProps) 
       return;
     }
     
-    const res = await fetch(`https://exam.elevateegy.com/api/v1/auth/resetPassword`, {
-      method: "PUT",
+    const res = await fetch(`${getApiBase()}/auth/reset-password`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({email, token:otpToken, newPassword}),
+      body: JSON.stringify({
+        token: tokenInput.trim(),
+        newPassword,
+        confirmPassword,
+      }),
     });
     
     const data = await res.json();
     
-    if (res.ok) {
+    if (res.ok && !isApiFailure(data)) {
       toast({
         description: "Password updated successfully",
       });
@@ -52,7 +67,7 @@ export default function NewPasswordStep({email, otpToken}:NewPasswordStepProps) 
         window.location.href = "/login";
       }, 1000);
     } else {
-      setError(data.message || "Failed to reset password. Please try again.");
+      setError(apiErrorMessage(data, "Failed to reset password. Please try again."));
     }
   }
   
@@ -60,14 +75,30 @@ export default function NewPasswordStep({email, otpToken}:NewPasswordStepProps) 
     <div>
       <Card className="w-full border-none">
       <CardContent>
-        <h2 className="font-inter font-bold text-black text-[1.8rem]">
+        <div>
+            <MoveLeft className="w-8 h-8 p-2 border cursor-pointer" onClick={onBack}/>
+          </div>
+        <h2 className="font-inter font-bold text-black text-[1.8rem] mt-4">
             Create a New Password
           </h2>
           <p className="text-gray-500 font-medium mt-1 font-geistMono">
-            Create a new strong password for your account.
+            Paste the reset token from your email (or use the link we sent you).
           </p>
         <form id="create-password-form" className="mt-10" onSubmit={handleSubmit}>
           <FieldGroup>
+            <Field>
+                  <FieldLabel htmlFor="reset-token" className="font-geistMono">
+                    Reset token
+                  </FieldLabel>
+                  <Input
+                      id="reset-token"
+                      placeholder="Token from email"
+                      className="input-default"
+                      type="text"
+                      value={tokenInput}
+                      onChange={(e) => setTokenInput(e.target.value)}
+                    />
+            </Field>
              <Field>
                   <FieldLabel htmlFor="create-new-password" className="font-geistMono">
                     New Password

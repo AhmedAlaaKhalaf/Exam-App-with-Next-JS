@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getApiBase, jsonAuthHeaders, isApiFailure, apiErrorMessage } from "@/lib/api";
 
 export default function Profile() {
     const { data: session, update } = useSession();
@@ -53,23 +54,20 @@ export default function Profile() {
             return;
         }
 
-        const response = await fetch(`https://exam.elevateegy.com/api/v1/auth/editProfile`, {
-            method: "PUT",
+        const response = await fetch(`${getApiBase()}/users/profile`, {
+            method: "PATCH",
             headers: {
-                "Content-Type": "application/json",
-                "token": session.accessToken,
+                ...jsonAuthHeaders(session.accessToken),
             },
             body: JSON.stringify({
                 firstName,
                 lastName,
-                username,
-                email,
                 phone,
             }),
         });
-        const data = await response.json();
+        const data = await response.json().catch(() => ({}));
         console.log(data);
-        if (response.ok) {
+        if (response.ok && !isApiFailure(data)) {
             toast({
                 description: "Profile updated successfully",
             });
@@ -77,7 +75,7 @@ export default function Profile() {
             await update();
         } else {
             toast({
-                description: data.message || "Failed to update profile",
+                description: apiErrorMessage(data, "Failed to update profile"),
                 variant: "destructive",
             });
         }
@@ -97,15 +95,15 @@ export default function Profile() {
             return;
         }
 
-        const res = await fetch(`https://exam.elevateegy.com/api/v1/auth/deleteMe`, {
+        const res = await fetch(`${getApiBase()}/users/account`, {
             method: "DELETE",
             headers: {
-                "token": session.accessToken,
+                ...jsonAuthHeaders(session.accessToken),
             },
         });
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
         console.log(data);
-        if (res.ok) {
+        if (res.ok && !isApiFailure(data)) {
             toast({
                 description: "Account deleted successfully",
                 variant: "success",
@@ -118,7 +116,7 @@ export default function Profile() {
             }, 1000);
         } else {
             toast({
-                description: data.message || "Failed to delete account",
+                description: apiErrorMessage(data, "Failed to delete account"),
                 variant: "destructive",
             });
             setDeleting(false);
@@ -167,9 +165,10 @@ export default function Profile() {
                       id="username"
                       placeholder="user123"
                       type="text"
-                      className="input-default text-secondary"
+                      className="input-default text-secondary bg-gray-50"
                       value={username}
-                      onChange={(e) => setUsername(e.target.value)}
+                      readOnly
+                      aria-readonly
                       />
               </Field>
              <Field>
@@ -180,9 +179,10 @@ export default function Profile() {
                       id="email"
                       placeholder="user@example.com"
                       type="email"
-                      className="input-default text-secondary"
+                      className="input-default text-secondary bg-gray-50"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      readOnly
+                      aria-readonly
                     />
               </Field>
              <Field>

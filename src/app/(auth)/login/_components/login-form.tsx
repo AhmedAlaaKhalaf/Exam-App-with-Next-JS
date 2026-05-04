@@ -11,6 +11,7 @@ import { signIn } from 'next-auth/react';
 import { toast } from "@/hooks/use-toast";
 
 interface LoginFormFields {
+  /** API field is `username` (email is not used for login on the new backend). */
   email: string,
   password:string
 }
@@ -65,21 +66,25 @@ export default function LoginForm() {
           <FieldGroup>
            <Field>
                   <FieldLabel htmlFor="login-form-email" className="font-geistMono">
-                    Email
+                    Username
                   </FieldLabel>
+                  <p className="text-xs text-gray-500 font-geistMono -mt-1 mb-1">
+                    Use the username you registered with (not your email), unless you chose your email as username.
+                  </p>
                   <Input
                     id="login-form-email"
-                    placeholder="user@example.com"
-                    type="email"
+                    placeholder="Username"
+                    type="text"
+                    autoComplete="username"
                     className="input-default"
                     {...register('email', {
                       required: {
                         value: true,
-                        message: "Email is required"
+                        message: "Username is required"
                       },
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: "Invalid email format"
+                      minLength: {
+                        value: 2,
+                        message: "Username is too short"
                       }
                     })}
                   />
